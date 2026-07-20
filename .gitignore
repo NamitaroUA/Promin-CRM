@@ -1,6 +1,8 @@
 /promin/*.sqlite3
 /promin/.env
 /promin/promin/__pycache__
+/promin/home/__pycache__
+/promin/home/migrations
 
 .vscode/
 .idea/
