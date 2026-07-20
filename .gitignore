@@ -1,0 +1,9 @@
+/promin/*.sqlite3
+/promin/.env
+/promin/promin/__pycache__
+
+.vscode/
+.idea/
+.DS_Store
+
+pyrefly.toml
