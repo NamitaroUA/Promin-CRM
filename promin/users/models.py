@@ -10,9 +10,10 @@ class User(AbstractUser):
         ('teacher', 'Викладач'),
         ('student', 'Студент')
     ]
+    role = models.CharField(max_length=50, choices=ROLE_CHOICES, default="student")
 
     rating = models.IntegerField(default=0)
-    role = models.CharField(max_length=50, choices=ROLE_CHOICES, default="student")
+    description = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.username} ({self.role})"
