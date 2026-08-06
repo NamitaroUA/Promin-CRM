@@ -2,6 +2,8 @@
 /promin/.env
 /promin/promin/__pycache__
 /promin/users/__pycache__
+/promin/frontpage/__pycache__/
+/promin/frontpage/migrations
 /promin/users/migrations
 
 .vscode/
@@ -9,3 +11,4 @@
 .DS_Store
 
 pyrefly.toml
+
