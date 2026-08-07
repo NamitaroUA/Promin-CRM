@@ -1,2 +1,5 @@
 @import url("https://fonts.googleapis.com/css?family=Libre+Franklin:400");
 
+html, body {
+    font-family: "Libre Franklin", sans-serif;
+}

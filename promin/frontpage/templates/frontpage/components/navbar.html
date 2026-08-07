@@ -1,0 +1,26 @@
+{% load static %}
+
+<header class="navbar">
+
+    <div class="logo">
+
+       <img
+    src="{% static 'content/logo.png' %}"
+    alt="Logo"
+>
+
+    </div>
+
+    <nav>
+
+        <ul>
+
+            <li><a href="{% url 'frontpage:index' %}">Головна</a></li>
+
+            <li><a href="{% url 'frontpage:about' %}">Про проєкт</a></li>
+
+        </ul>
+
+    </nav>
+
+</header>
