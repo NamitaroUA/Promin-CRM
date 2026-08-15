@@ -1,9 +1,30 @@
 {% extends "frontpage/base.html" %}
 
+{% load static %}
+
 {% block title %}
 Промінь
 {% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/hero.css' %}">
+{% endblock %}
+
 {% block content %}
-<h1>Вітаємо у проєкті Промінь</h1>
+
+<section class="front-section">
+    <div class="front-circle">
+        <h1 class="title">Проєкт «Промінь»</h1>
+        <p class="title-description">Простір розвитку для всіх</p>
+    </div>
+</section>
+
+
+<section class="info-section">
+    <img src="{% static 'content/infologo1.png' %}" class="info-image" alt="Processor logo">
+    <p class="info-description">Майбутнє вже зовсім скоро настане. Чекайте офіційного релізу!</p>
+</section>
+
+
+
 {% endblock %}
