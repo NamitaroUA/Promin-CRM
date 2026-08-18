@@ -9,6 +9,15 @@ footer {
     justify-content: center;
 
     gap: 25px;
+    /* rgb(238, 238, 238)*/
 
-    background-color:rgb(238, 238, 238);
+    background-color:rgb(240, 240, 240);
+}
+
+hr {
+    width: 100%;
+    border: none;
+    margin: 0px;
+    height: 1px;
+    background-color: rgb(203, 203, 203);
 }

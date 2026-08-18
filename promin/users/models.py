@@ -6,6 +6,10 @@ class User(AbstractUser):
     """
     Inheriting most of functionality from AbstractUser, Django's standart user preset.
     """
+
+    first_name = models.CharField(max_length=150, verbose_name='first name')
+    last_name = models.CharField(max_length=150, verbose_name='last name')
+
     ROLE_CHOICES = [
         ('teacher', 'Викладач'),
         ('student', 'Студент'),
@@ -17,6 +21,8 @@ class User(AbstractUser):
         ('graduated', 'Випустився'),
         ('outsider', 'Зовнішній учасник'),
     ]
+
+    phone_number = models.CharField(max_length=20, blank=True, verbose_name="Номер телефону")
 
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default="studying", verbose_name="Статус")
 
