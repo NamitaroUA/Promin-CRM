@@ -13,8 +13,8 @@ class CustomUserAdmin(UserAdmin):
             {"fields": ("first_name", "last_name", "email")},
         ),
         (
-            "Додаткові поля CRM",
-            {"fields": ("role", "rating", "description")},
+            "Додаткові поля",
+            {"fields": ("group", "role", "status", "rating", "description",)},
         ),
         (
             "Права доступу",
@@ -40,7 +40,9 @@ class CustomUserAdmin(UserAdmin):
                 "fields": (
                     "username",
                     "password",
+                    "group",
                     "role",
+                    "status",
                     "rating",
                     "description",
                 ),
@@ -48,5 +50,5 @@ class CustomUserAdmin(UserAdmin):
         ),
     )
 
-    list_display = ["username", "email", "role", "rating", "is_staff"]
-    list_filter = ["role", "is_staff", "is_superuser"]
+    list_display = ["username", "first_name", "last_name", "email", "role", "group", "status", "rating", "is_staff"]
+    list_filter = ["group", "status", "role", "is_staff",]
