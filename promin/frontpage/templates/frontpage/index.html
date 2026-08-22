@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/hero.css' %}">
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -21,8 +21,18 @@
 
 
 <section class="info-section">
-    <img src="{% static 'content/infologo1.png' %}" class="info-image" alt="Processor logo">
-    <p class="info-description">Майбутнє вже зовсім скоро настане. Чекайте офіційного релізу!</p>
+    <img src="{% static 'content/infologo0.jpg' %}" class="info-image left-side" alt="An atom icon"> 
+    <p class="info-description right-side">Промінь покликаний спростити життя кожного учасника IT гуртка.</p>
+</section>
+
+<section class="info-main-section">
+    <h1>"Промінь" надає такі можливості:</h1>
+</section>
+
+
+<section class="info-section">
+    <img src="{% static 'content/infologo1.png' %}" class="info-image right-side" alt="Processor logo">
+    <p class="info-description left-side">Майбутнє вже зовсім скоро настане. Чекайте офіційного релізу!</p>
 </section>
 
 
