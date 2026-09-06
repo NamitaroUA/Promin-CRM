@@ -11,6 +11,7 @@ def login(request):
 def user_login(request):
     if request.method == "POST":
         login_value = request.POST.get('login', '')
+        password_value = request.POST.get("password", '')
         print(login_value)
         return HttpResponse(f"Received: {login_value}")
 
