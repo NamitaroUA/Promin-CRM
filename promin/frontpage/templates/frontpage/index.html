@@ -19,6 +19,10 @@
     </div>
 </section>
 
+{% if user.is_authenticated %}
+<h1>Ви увійшли в акаунт успішно, {{ user.username }}!</h1>
+{% endif %}
+
 
 <section class="info-section">
     <img src="{% static 'content/infologo0.jpg' %}" class="info-image left-side" alt="An atom icon"> 

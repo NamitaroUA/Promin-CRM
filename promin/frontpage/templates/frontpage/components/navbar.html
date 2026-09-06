@@ -11,8 +11,22 @@
         <ul>
             <li><a href="{% url 'frontpage:index' %}">Головна</a></li>
             <li><a href="{% url 'frontpage:about' %}">Про проєкт</a></li>
+
+            {% if user.is_authenticated and user.is_staff %}
             <li><a href="{% url 'admin:index' %}">Адміністрування</a></li>
-            <li><a href="{% url 'users:login' %}">Увійти</a></li>
+            {% endif %}
+            {% if user.is_authenticated %} 
+            <li><a href="{% url 'users:home' %}">Студенту</a></li>
+
+            <li>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Log Out</button>
+                </form> 
+                </li>
+                {% else %}<a href="{% url 'login' %}">Увійти</a>
+                
+                {% endif %}
         </ul>
     </nav>
 </header>
