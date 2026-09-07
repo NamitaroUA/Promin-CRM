@@ -6,3 +6,5 @@ python-dotenv==1.2.2
 sqlparse==0.5.5
 types-PyYAML==6.0.12.20260518
 typing_extensions==4.16.0
+psycopg[binary]==3.3.5
+dj-database-url==2.3.0

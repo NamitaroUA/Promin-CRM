@@ -3,8 +3,6 @@
 /promin/__pycache__
 /users/__pycache__
 /frontpage/__pycache__/
-/frontpage/migrations
-/users/migrations
 
 .vscode/
 .idea/
