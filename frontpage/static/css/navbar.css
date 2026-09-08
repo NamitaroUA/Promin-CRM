@@ -2,8 +2,9 @@ header {
     background: white;
 
     
-    box-shadow: 0px 4px 16px 0px rgba(0,0,0,0.59)
+    box-shadow: 0px 4px 16px 0px rgba(0,0,0,0.59);
     /*0 4px 12px rgba(0, 0, 0, 0.08) */
+
 }
 
 .navbar {
@@ -13,29 +14,109 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 40px;
+    padding: 0 15px;
     position: sticky;
     top: 0;
     z-index: 100;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #007bff #f0f0f0;
 }
 
 .navbar ul {
+    width: auto;
     display: flex;
-    gap: 80px;
+    gap: 65px;
     list-style: none;
+
+    margin: 0;
+    padding: 0;
+    align-items: center;
 }
 
-.navbar a {
+.navbar a,
+.navbar button {
     text-decoration: none;
+    font-family: inherit;
     color: #111;
     font-size: 1.3rem;
     transition: .25s;
+    white-space: nowrap;
+    font-weight: 400;
+
+    line-height: 1;
+}
+
+.navbar button {
+    background-color: white;
+    border: none;
+}
+
+.navbar button:hover {
+    color: red;
+    font-size: calc(1.3rem * 1.05);
 }
 
 .navbar a:hover {
-    color: #00C8A2;
+    color: #005ac8;
+    font-size: calc(1.3rem * 1.05);
 }
 
 .logo img {
     width: 64px;
+}
+
+@media (max-width: 900px) {
+    .navbar {
+        height: 55px;
+        padding: 0 10px;
+    }
+
+    .navbar ul, button {
+        gap: 25px;
+    }
+
+    .navbar a, .navbar button {
+        font-size: 1.1rem;
+    }
+
+    .navbar a:hover {
+        color: #005ac8;
+        font-size: calc(1.1rem * 1.05)
+    }
+
+    .navbar button:hover {
+        color: red;
+        font-size: calc(1.1rem * 1.05)
+    }
+}
+
+@media (max-width: 600px){
+    .navbar {
+        height: 50px;
+        padding: 0 0px;
+    }
+
+    .navbar ul, button {
+        gap: 15px;
+        
+    }
+
+    .navbar a, .navbar button {
+        font-size: 0.95rem;
+    }
+
+    .navbar a:hover {
+        color: #005ac8;
+        font-size: calc(0.95rem * 1.05)
+    }
+
+    .navbar button:hover {
+        color: red;
+        font-size: calc(0.95rem * 1.05)
+    }
+
+    .logo img {
+        width: 48px;
+    }
 }
