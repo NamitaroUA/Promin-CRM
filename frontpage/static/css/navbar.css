@@ -14,7 +14,8 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 15px;
+    padding-left: 15px;
+    padding-right: 15px;
     position: sticky;
     top: 0;
     z-index: 100;
@@ -69,7 +70,8 @@ header {
 @media (max-width: 900px) {
     .navbar {
         height: 55px;
-        padding: 0 10px;
+        padding-left: 10px;
+        padding-right: 10px;
     }
 
     .navbar ul, button {
@@ -94,7 +96,8 @@ header {
 @media (max-width: 600px){
     .navbar {
         height: 50px;
-        padding: 0 0px;
+        padding-left: 8px;
+        padding-right: 8px;
     }
 
     .navbar ul, button {

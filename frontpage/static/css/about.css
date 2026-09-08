@@ -1,0 +1,31 @@
+main h1, 
+main h2,
+main h3 {
+    padding-left: 25px;
+}
+
+main h1 {
+    font-size: 25px;
+}
+
+main h2 {
+    font-size: 23px;
+}
+
+main h3 {
+    font-size: 21px;
+}
+
+main p {
+    max-width: 650px;
+    background-color: rgb(211, 255, 239);
+    border-radius: 25px;
+    padding: 10px;
+    margin: 0px 15px;
+    font-size: 18px;
+}
+
+.japanese {
+    color: rgb(255, 89, 117);
+    -webkit-text-stroke: 0.25px black;
+}
