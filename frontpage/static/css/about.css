@@ -9,20 +9,28 @@ main h1 {
 }
 
 main h2 {
-    font-size: 23px;
+    font-size: 20px;
+    font-weight: lighter;
+    font-style: italic;
 }
 
-main h3 {
-    font-size: 21px;
-}
 
 main p {
+    box-shadow: 3px 4px 8px 0px rgba(0,0,0,0.59);
+
     max-width: 650px;
-    background-color: rgb(211, 255, 239);
+    background-color: #ffffff;
+    border: 1px solid #f8f8f8;
     border-radius: 25px;
     padding: 10px;
     margin: 0px 15px;
+    margin-bottom: 25px;
     font-size: 18px;
+    white-space: pre-line;
+}
+
+.important-text {
+    font-weight: bold;
 }
 
 .japanese {
