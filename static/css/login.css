@@ -1,0 +1,140 @@
+@import url("https://fonts.googleapis.com/css?family=Libre+Franklin:400");
+
+html,
+body {
+    font-family: "Libre Franklin", sans-serif;
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+}
+
+.main-content {
+    margin-left: 35%;
+    height: 100vh;
+    width: 75%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-container {
+    text-align: center;
+    width: 600px;
+    height: auto;
+    display: grid;
+    align-items: center;
+    gap: 20px 15px;
+    margin-bottom: 15px;
+}
+
+.form-container div {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 355px;
+}
+
+
+.form-container label {
+    width: 140px;
+    text-align: right;
+    margin-right: 15px;
+}
+
+
+.form-container input[type="text"],
+.form-container input[type="password"] {
+    width: 200px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    box-sizing: border-box;
+}
+
+.form-container button {
+    justify-self: center;
+    margin-right: 25px;
+    font-size: 17px;
+    width: 150px;
+    background-color: #f0f0f0;
+    border: 1px solid rgb(169, 169, 169);
+    border-radius: 20px;
+    padding: 10px 30px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+
+.login-image {
+    /* login-page-image 1 */
+
+    position: fixed;
+    background: url('/static/content/login_background.png') no-repeat 65% center / cover;
+
+    width: 25%;
+    height: 111vh;
+    left: 0px;
+    top: -3%;
+    box-shadow: 10px 0px 30px 1px rgba(0, 0, 0, 0.25);
+
+}
+
+.title {
+    text-align: center;
+    margin-right: 8%;
+}
+
+@media (max-width: 640px) {
+    body {
+        color: white;
+    }
+
+    .title {
+        margin-right: 0;
+    }
+
+    .main-content {
+        margin: 15%;
+    }
+
+    .form-container {
+        width: auto;
+        margin-bottom: 30vh;
+    }
+
+    .form-container div {
+        flex-direction: column;
+        justify-content: center;
+        margin: 0;
+    }
+
+    .form-container input[type="text"],
+    .form-container input[type="password"] {
+        background-color: #c7c7c7;
+    }
+
+    .form-container label {
+        margin-bottom: 10px;
+        width: 140px;
+        text-align: center;
+    }
+
+    .login-image {
+        width: 100vw;
+        background-image: linear-gradient(rgba(48, 48, 48, 0.65),
+                rgba(48, 48, 48, 0.65)), url(/static/content/login_background.png);
+
+        z-index: -1;
+    }
+
+    .form-container button {
+        margin-right: 0;
+        margin-top: 10px;
+        background-color: #e4e4e4;
+    }
+}
