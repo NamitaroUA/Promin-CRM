@@ -20,6 +20,7 @@ header {
     top: 0;
     z-index: 100;
     overflow-x: auto;
+    overflow-y: 0;
     scrollbar-width: thin;
     scrollbar-color: #007bff #f0f0f0;
 }

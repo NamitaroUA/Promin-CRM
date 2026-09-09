@@ -11,5 +11,6 @@
     <h1>Вітаю вдома, {{ user.first_name }}</h1>
     <p>Ваш рейтинг складає: {{ user.rating }} PR.<br>Роль: {{ user.get_role_display }}.<br>Статус: {{ user.get_status_display }}.</p>
     <a href="{% url 'frontpage:index' %}">Повернутися назад</a>
+    <a href="{% url 'password_change' %}">Змінити пароль</a>
 </body>
 </html>
