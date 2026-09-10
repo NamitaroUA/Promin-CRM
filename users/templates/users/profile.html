@@ -1,0 +1,14 @@
+{% extends "users/base.html" %}
+
+{% load static %}
+
+{% block title %}
+Профіль {{userObj.first_name}}
+{% endblock %}
+
+
+{% block content %}
+<h1>Профіль користувача {{ userObj.first_name }} {{ userObj.last_name }}</h1>
+<p>Рейтинг: {{ userObj.rating }} PR.<br>Роль: {{ userObj.get_role_display }}.<br>Статус: {{ userObj.get_status_display }}.</p>
+<a href="{% url 'users:home' %}">Повернутися назад</a>
+{% endblock %}

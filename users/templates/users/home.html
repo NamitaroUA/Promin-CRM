@@ -1,16 +1,14 @@
+{% extends "users/base.html" %}
+
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+{% block title %}
+Кабінет
+{% endblock %}
+
+{% block content %}
     <h1>Вітаю вдома, {{ user.first_name }}</h1>
     <p>Ваш рейтинг складає: {{ user.rating }} PR.<br>Роль: {{ user.get_role_display }}.<br>Статус: {{ user.get_status_display }}.</p>
     <a href="{% url 'frontpage:index' %}">Повернутися назад</a>
     <a href="{% url 'password_change' %}">Змінити пароль</a>
-</body>
-</html>
+{% endblock %}

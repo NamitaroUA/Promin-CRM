@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from .models import User
 
 # Create your views here.
 def index(request):
@@ -9,6 +10,14 @@ def index(request):
 @login_required
 def home(request):
     return render(request, "users/home.html")
+
+@login_required
+def profile(request, user_id):
+    userObj = User.objects.get(id=user_id)
+
+    context = {'userObj': userObj}
+
+    return render(request, "users/profile.html", context)
 
 #def user_login(request):
 #    if request.method == "POST":
