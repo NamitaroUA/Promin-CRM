@@ -8,3 +8,4 @@ types-PyYAML==6.0.12.20260518
 typing_extensions==4.16.0
 psycopg[binary]==3.3.5
 dj-database-url==2.3.0
+pillow==12.3.0
