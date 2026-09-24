@@ -74,7 +74,7 @@ body {
     /* login-page-image 1 */
 
     position: fixed;
-    background: url('/static/content/login_background.png') no-repeat 65% center / cover;
+    background: url('/static/content/login_background.jpg') no-repeat 65% center / cover;
 
     width: 25%;
     height: 111vh;
@@ -147,7 +147,7 @@ body {
     .login-image {
         width: 100vw;
         background-image: linear-gradient(rgba(48, 48, 48, 0.65),
-                rgba(48, 48, 48, 0.65)), url(/static/content/login_background.png);
+                rgba(48, 48, 48, 0.65)), url(/static/content/login_background.jpg);
 
         z-index: -1;
     }
