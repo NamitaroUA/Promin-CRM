@@ -5,5 +5,7 @@ app_name = "users"
 
 urlpatterns = [
     path("home/", views.home, name="home"),
-    path("<int:user_id>/profile/", views.profile, name="profile")
+    path("<int:user_id>/profile/", views.profile, name="profile"),
+    path("posts/", views.posts, name="posts"),
+    path("posts/new/", views.post_new, name='post_new')
 ]

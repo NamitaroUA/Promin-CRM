@@ -1,3 +1,5 @@
+from django.contrib.admin import ModelAdmin
+from users.models import Post
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
@@ -28,7 +30,6 @@ class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
 
-    # Описуємо fieldsets явно через tuple — це ідеально працює в Django і задовольняє Pyright
     fieldsets = (
         (None, {"fields": ("username", "password")}),
         (
@@ -54,7 +55,6 @@ class CustomUserAdmin(UserAdmin):
         ("Важливі дати", {"fields": ("last_login", "date_joined")}),
     )
 
-    # Аналогічно для add_fieldsets (форма створення нового користувача)
     add_fieldsets = (
         (
             None,
@@ -80,3 +80,7 @@ class CustomUserAdmin(UserAdmin):
 
     list_display = ["username", "first_name", "last_name", "email", "role", "group", "status", "rating", "is_staff"]
     list_filter = ["group", "status", "role", "is_staff",]
+
+@admin.register(Post)
+class CustomPost(ModelAdmin):
+    list_display = ["title","author", "post_type", "last_edit", "created_at"]
