@@ -1,0 +1,22 @@
+{% extends "users/base.html" %}
+
+{% load static %}
+{% load user_tags %}
+
+{% block title %}
+{{ post.title }}
+{% endblock %}
+
+{% block content %}
+{% if user|is_editor %}
+<a href="{% url 'users:post_edit' pk=post.pk %}">Редагувати</a>
+{% endif %}
+
+<h2>{{ post.title }}</h2>
+<p>{{ post.description }}</p>
+<p>Автор: <a href="{% url 'users:profile' pk=post.author.pk %}">{{ post.author.last_name }} {{ post.author.first_name }}</a></p>
+<p>Створено: {{ post.created_at }}</p>
+<p>Редаговано: {{ post.last_edit }}</p>
+
+<a href="{% url 'users:posts' %}">Повернутися назад</a>
+{% endblock %}

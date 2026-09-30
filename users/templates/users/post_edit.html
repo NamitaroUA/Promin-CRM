@@ -1,0 +1,23 @@
+{% extends "users/base.html" %}
+
+{% load static %}
+{% load user_tags %}
+
+{% block title %}
+{% if is_edit %}
+Редагування поста
+{% else %}
+Створення нового поста
+{% endif %}
+{% endblock %}
+
+
+{% block content %}
+<h2>{% if is_edit %}Редагування поста {% else %}Створення нового поста {% endif %}</h2>
+<form method="POST"> {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Зберегти</button>
+</form>
+
+<a href="{% url 'users:posts' %}">Повернутися назад</a>
+{% endblock %}
