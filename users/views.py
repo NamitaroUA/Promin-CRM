@@ -49,7 +49,7 @@ def post_new(request):
             post.save()
             return redirect('users:posts')
     else:    
-        form = PostForm
+        form = PostForm()
     return render(request, 'users/post_edit.html', {'form': form, 'is_edit': False})
 
 @login_required
@@ -64,7 +64,7 @@ def post_edit(request, pk):
             post.save()
             return redirect('users:post_detail', pk=post.pk)
     else:    
-        form = PostForm
+        form = PostForm(instance=post)
     return render(request, 'users/post_edit.html', {'form': form, 'is_edit': True})
 
 #def user_login(request):
