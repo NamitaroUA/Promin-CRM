@@ -1,19 +1,23 @@
 import io
+from unittest import mock
 
 from PIL import Image
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
+from django.contrib.messages import get_messages
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.templatetags.static import static
-from django.db import connection
-from django.test import SimpleTestCase, TestCase, override_settings
+from django.db import IntegrityError, connection
+from django.db.migrations.executor import MigrationExecutor
+from django.test import SimpleTestCase, TestCase, TransactionTestCase, override_settings
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
 from users.admin import AttachmentAdminForm
 from users.forms import AttendanceForm
+from users.utils import can_review_post, is_root_editor
 from users.models import Attachment, Post, PostAttendance
 from users.validators import validate_certificate
 
@@ -716,3 +720,154 @@ class AdminTests(TestCase):
             data={}, files={"file": png}, instance=Attachment(post_attendance=att)
         )
         self.assertTrue(form.is_valid(), form.errors)
+
+
+class PermissionHelperTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        User = get_user_model()
+        cls.author = User.objects.create_user(username="author", password="x")
+        cls.other = User.objects.create_user(username="other", password="x")
+        cls.root = User.objects.create_user(username="root", password="x")
+        cls.editor = User.objects.create_user(username="editor", password="x")
+        cls.root.groups.add(Group.objects.get_or_create(name="Root Editor")[0])
+        cls.editor.groups.add(Group.objects.get_or_create(name="Editor")[0])
+        cls.post = Post.objects.create(title="P", author=cls.author)
+        cls.orphan_post = Post.objects.create(title="Orphan", author=None)
+
+    def test_is_root_editor(self):
+        self.assertTrue(is_root_editor(self.root))
+        self.assertFalse(is_root_editor(self.editor))
+        self.assertFalse(is_root_editor(self.other))
+
+    def test_can_review_post(self):
+        self.assertTrue(can_review_post(self.author, self.post))
+        self.assertTrue(can_review_post(self.root, self.post))
+        self.assertFalse(can_review_post(self.other, self.post))
+        self.assertFalse(can_review_post(self.editor, self.post))
+
+    def test_can_review_post_without_author(self):
+        self.assertFalse(can_review_post(self.other, self.orphan_post))
+        self.assertFalse(can_review_post(self.author, self.orphan_post))
+        self.assertTrue(can_review_post(self.root, self.orphan_post))
+
+
+@override_settings(STORAGES=IN_MEMORY_STORAGES, PASSWORD_HASHERS=FAST_HASHERS)
+class AttachmentCleanupTests(TestCase):
+    def setUp(self):
+        User = get_user_model()
+        self.author = User.objects.create_user(username="author", password="x")
+        self.student = User.objects.create_user(username="student", password="x")
+        self.post = Post.objects.create(title="P", author=self.author)
+        self.att = PostAttendance.objects.create(user=self.student, post=self.post)
+        self.attachment = Attachment.objects.create(
+            post_attendance=self.att,
+            file=SimpleUploadedFile("c.png", _image_bytes("PNG"), content_type="image/png"),
+        )
+        self.name = self.attachment.file.name
+        self.assertTrue(default_storage.exists(self.name))
+
+    def test_deleting_post_removes_file(self):
+        with self.captureOnCommitCallbacks(execute=True):
+            self.post.delete()
+        self.assertFalse(default_storage.exists(self.name))
+        self.assertFalse(Attachment.objects.exists())
+
+    def test_deleting_student_removes_file(self):
+        with self.captureOnCommitCallbacks(execute=True):
+            self.student.delete()
+        self.assertFalse(default_storage.exists(self.name))
+        self.assertFalse(Attachment.objects.exists())
+
+    def test_file_kept_until_commit(self):
+        with self.captureOnCommitCallbacks(execute=False):
+            self.attachment.delete()
+        self.assertTrue(default_storage.exists(self.name))
+
+    def test_deleting_attachment_with_empty_file(self):
+        empty = Attachment.objects.create(post_attendance=self.att, file="")
+        with self.captureOnCommitCallbacks(execute=True):
+            empty.delete()
+        self.assertFalse(Attachment.objects.filter(pk=empty.pk).exists())
+        self.assertTrue(default_storage.exists(self.name))
+
+
+class MigrationTests(TransactionTestCase):
+    before = [("users", "0002_post_postattendance_attachment_postfile_postimage")]
+    after = [("users", "0004_create_editor_groups")]
+
+    def setUp(self):
+        self.executor = MigrationExecutor(connection)
+
+    def tearDown(self):
+        executor = MigrationExecutor(connection)
+        executor.loader.build_graph()
+        executor.migrate(executor.loader.graph.leaf_nodes())
+
+    def migrate(self, targets):
+        executor = MigrationExecutor(connection)
+        executor.migrate(targets)
+        executor.loader.build_graph()
+        return executor
+
+    def test_status_data_migrated(self):
+        executor = self.migrate(self.before)
+        apps = executor.loader.project_state(self.before).apps
+        User = apps.get_model("users", "User")
+        HPost = apps.get_model("users", "Post")
+        HAtt = apps.get_model("users", "PostAttendance")
+        author = User.objects.create(username="a", first_name="a", last_name="a")
+        s1 = User.objects.create(username="s1", first_name="a", last_name="a")
+        s2 = User.objects.create(username="s2", first_name="a", last_name="a")
+        post = HPost.objects.create(title="P", author=author)
+        a_true = HAtt.objects.create(user=s1, post=post, status=True)
+        a_false = HAtt.objects.create(user=s2, post=post, status=False)
+
+        executor = self.migrate(self.after)
+        apps = executor.loader.project_state(self.after).apps
+        HAtt = apps.get_model("users", "PostAttendance")
+        approved = HAtt.objects.get(pk=a_true.pk)
+        pending = HAtt.objects.get(pk=a_false.pk)
+        self.assertEqual(approved.status, "approved")
+        self.assertEqual(pending.status, "pending")
+        self.assertEqual(approved.review_comment, "")
+        self.assertEqual(pending.review_comment, "")
+
+    def test_group_migration_idempotent(self):
+        from importlib import import_module
+
+        mod = import_module("users.migrations.0004_create_editor_groups")
+        executor = self.migrate(self.after)
+        apps = executor.loader.project_state(self.after).apps
+        mod.create_groups(apps, None)
+        mod.create_groups(apps, None)
+        self.assertEqual(Group.objects.filter(name="Editor").count(), 1)
+        self.assertEqual(Group.objects.filter(name="Root Editor").count(), 1)
+
+    def test_group_migration_roundtrip(self):
+        back = [("users", "0003_attendance_status_and_constraints")]
+        self.migrate(self.after)
+        self.migrate(back)
+        self.migrate(self.after)
+        self.assertEqual(Group.objects.filter(name="Editor").count(), 1)
+        self.assertEqual(Group.objects.filter(name="Root Editor").count(), 1)
+
+
+@override_settings(STORAGES=IN_MEMORY_STORAGES, PASSWORD_HASHERS=FAST_HASHERS)
+class SubmitRaceTests(TestCase):
+    def test_integrity_error_on_save(self):
+        User = get_user_model()
+        author = User.objects.create_user(username="author", password="x")
+        student = User.objects.create_user(username="student", password="x")
+        post = Post.objects.create(title="P", author=author)
+        self.client.force_login(student)
+        detail = reverse("users:post_detail", kwargs={"pk": post.pk})
+        with mock.patch("users.views.AttendanceForm.save", side_effect=IntegrityError):
+            response = self.client.post(
+                reverse("users:attendance_submit", kwargs={"pk": post.pk}),
+                {"description": "Участь"},
+            )
+        self.assertRedirects(response, detail, fetch_redirect_response=False)
+        texts = [str(m) for m in get_messages(response.wsgi_request)]
+        self.assertIn("Ви вже подали заявку на цей пост.", texts)
+        self.assertFalse(PostAttendance.objects.exists())
