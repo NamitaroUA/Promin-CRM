@@ -1,11 +1,12 @@
 *.sqlite3
 .env
-/promin/__pycache__
-/users/__pycache__
-/frontpage/__pycache__/
+__pycache__/
+*.py[cod]
 
 .vscode/
 .idea/
 .DS_Store
 
 pyrefly.toml
+
+claude_instructions/
