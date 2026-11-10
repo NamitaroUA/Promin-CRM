@@ -12,6 +12,7 @@ from django.test import SimpleTestCase, TestCase, override_settings
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
+from users.admin import AttachmentAdminForm
 from users.forms import AttendanceForm
 from users.models import Attachment, Post, PostAttendance
 from users.validators import validate_certificate
@@ -635,3 +636,83 @@ class ReviewsPageTests(TestCase):
         with self.assertNumQueries(baseline):
             response = self.client.get(self.url)
         self.assertContains(response, "Очікують розгляду: 7")
+
+
+@override_settings(STORAGES=IN_MEMORY_STORAGES, PASSWORD_HASHERS=FAST_HASHERS)
+class AdminTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        User = get_user_model()
+        cls.admin_user = User.objects.create_superuser(
+            username="admin", password="x", email="admin@example.com"
+        )
+        cls.student = User.objects.create_user(
+            username="student", password="x", first_name="Ігор", last_name="Студент"
+        )
+        cls.post = Post.objects.create(title="Олімпіада", description="Опис", post_type="event")
+
+    def setUp(self):
+        self.client.force_login(self.admin_user)
+
+    def att(self, user=None, **kw):
+        return PostAttendance.objects.create(user=user or self.student, post=self.post, **kw)
+
+    def with_attachment(self, att):
+        Attachment.objects.create(
+            post_attendance=att,
+            file=SimpleUploadedFile("cert.png", _image_bytes("PNG"), content_type="image/png"),
+        )
+        return att
+
+    def test_changelist_shows_request(self):
+        self.with_attachment(self.att(status="pending"))
+        response = self.client.get(reverse("admin:users_postattendance_changelist"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "student")
+        self.assertContains(response, '<td class="field-status">Очікує розгляду</td>')
+        self.assertContains(response, 'alt="True"')  # certificate column
+
+    def test_change_page_with_attachment(self):
+        att = self.with_attachment(self.att())
+        response = self.client.get(reverse("admin:users_postattendance_change", args=[att.pk]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_approve_selected_clears_review_comment(self):
+        att1 = self.att(status="rejected", review_comment="Невірний сертифікат")
+        att2 = self.att(user=self.admin_user, status="pending", review_comment="Старий коментар")
+        response = self.client.post(
+            reverse("admin:users_postattendance_changelist"),
+            {"action": "approve_selected", "_selected_action": [att1.pk, att2.pk]},
+        )
+        self.assertEqual(response.status_code, 302)
+        for att in (att1, att2):
+            att.refresh_from_db()
+            self.assertEqual(att.status, "approved")
+            self.assertEqual(att.review_comment, "")
+
+    def test_reject_selected_sets_rejected(self):
+        att = self.att(status="pending")
+        response = self.client.post(
+            reverse("admin:users_postattendance_changelist"),
+            {"action": "reject_selected", "_selected_action": [att.pk]},
+        )
+        self.assertEqual(response.status_code, 302)
+        att.refresh_from_db()
+        self.assertEqual(att.status, "rejected")
+
+    def test_inline_form_rejects_too_large_file(self):
+        att = self.att()
+        big = SimpleUploadedFile("big.pdf", b"%PDF-" + b"0" * 102400)
+        form = AttachmentAdminForm(
+            data={}, files={"file": big}, instance=Attachment(post_attendance=att)
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn("file", form.errors)
+
+    def test_inline_form_accepts_small_png(self):
+        att = self.att()
+        png = SimpleUploadedFile("cert.png", _image_bytes("PNG"), content_type="image/png")
+        form = AttachmentAdminForm(
+            data={}, files={"file": png}, instance=Attachment(post_attendance=att)
+        )
+        self.assertTrue(form.is_valid(), form.errors)
