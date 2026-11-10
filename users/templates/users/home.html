@@ -9,8 +9,10 @@
 {% block content %}
     <h1>Вітаю вдома, {{ user.first_name }}</h1>
     <p>Ваш рейтинг складає: {{ user.rating }} PR.<br>Роль: {{ user.get_role_display }}.<br>Статус: {{ user.get_status_display }}.</p>
-    <a href="{% url 'frontpage:index' %}">Повернутися назад</a>
-    <a href="{% url 'users:posts' %}">Стрічка новин</a>
-    <a href="{% url 'password_change' %}">Змінити пароль</a>
-    {% if pending_reviews_count is not None %}<a href="{% url 'users:reviews' %}">Заявки на підтвердження ({{ pending_reviews_count }})</a>{% endif %}
+    <nav class="home-links">
+        <a href="{% url 'frontpage:index' %}">Повернутися назад</a>
+        <a href="{% url 'users:posts' %}">Стрічка новин</a>
+        <a href="{% url 'password_change' %}">Змінити пароль</a>
+        {% if pending_reviews_count is not None %}<a href="{% url 'users:reviews' %}">Заявки на підтвердження ({{ pending_reviews_count }})</a>{% endif %}
+    </nav>
 {% endblock %}

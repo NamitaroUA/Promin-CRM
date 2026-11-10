@@ -1,6 +1,6 @@
 <li>
     <a href="{% url 'users:profile' pk=att.user.pk %}">{{ att.user.last_name }} {{ att.user.first_name }}</a>
-    — {{ att.get_status_display }}, {{ att.created_at }}
+    — <span class="status status--{{ att.status }}">{{ att.get_status_display }}</span>, {{ att.created_at }}
     <p>{{ att.description }}</p>
     {% if att.review_comment %}
     <p>Причина відхилення: {{ att.review_comment }}</p>
@@ -9,6 +9,7 @@
     <p><a href="{{ attachment.file.url }}" target="_blank" rel="noopener">Сертифікат</a></p>
     {% endfor %}
     {% if att.user_id != request.user.id %}
+    <div class="review-actions">
     {% if att.status != "approved" %}
     <form method="post" action="{% url 'users:attendance_approve' att.pk %}">
         {% csrf_token %}
@@ -21,8 +22,9 @@
         {% csrf_token %}
         {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
         <textarea name="review_comment" maxlength="500" rows="2" placeholder="Причина відхилення (необов'язково)"></textarea>
-        <button type="submit">Відхилити</button>
+        <button type="submit" class="button--danger">Відхилити</button>
     </form>
     {% endif %}
+    </div>
     {% endif %}
 </li>

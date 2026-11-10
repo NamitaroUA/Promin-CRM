@@ -1,0 +1,68 @@
+/* Minimal throwaway styles for the user dashboard. Real design comes later. */
+:root {
+  --text: #16181d; --muted: #5b616e; --bg: #f6f7f9; --surface: #ffffff;
+  --border: #e6e8ec; --primary: #0057d9; --success: #1a7f37;
+  --warning: #8a5a00; --danger: #b42318;
+  --success-bg: #dcf5e3; --warning-bg: #fdf0d2; --danger-bg: #fde4e1; --info-bg: #e3edfc;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--text); line-height: 1.5;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+main { max-width: 720px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 1.5rem; margin: 0 0 12px; }
+h2 { font-size: 1.25rem; margin: 16px 0 8px; }
+h3 { font-size: 1.1rem; margin: 0 0 8px; }
+a { color: var(--primary); }
+p { margin: 0 0 8px; overflow-wrap: anywhere; }
+
+section, ul:not(.messages) > li {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px; margin: 0 0 12px;
+}
+ul { list-style: none; padding: 0; margin: 0; }
+
+.home-links { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 12px; }
+
+label { display: block; font-weight: 600; margin: 8px 0 4px; }
+input:not([type=hidden]):not([type=checkbox]):not([type=radio]), textarea, select {
+  display: block; width: 100%; padding: 10px; font: inherit; color: inherit;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; border-color: #b9bec8;
+}
+textarea { resize: vertical; }
+.helptext { display: block; color: var(--muted); font-size: 0.875rem; }
+.errorlist { color: var(--danger); list-style: none; padding: 0; margin: 4px 0; }
+ul.errorlist > li { background: none; border: 0; padding: 0; margin: 0; }
+
+button {
+  min-height: 44px; padding: 0 16px; font: inherit; font-weight: 600; cursor: pointer;
+  color: #fff; background: var(--primary); border: 1px solid var(--primary); border-radius: 8px;
+}
+.button--secondary { color: var(--primary); background: transparent; }
+.button--danger { color: #fff; background: var(--danger); border-color: var(--danger); }
+button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 3px solid var(--primary); outline-offset: 2px;
+}
+form + form, p + form { margin-top: 8px; }
+.review-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; margin-top: 8px; }
+.review-actions form { margin: 0; }
+
+.messages { margin: 0 0 12px; }
+.messages li, .message { padding: 10px 14px; border-radius: 8px; margin: 0 0 8px; border: 0; }
+.message--success { background: var(--success-bg); color: var(--success); }
+.message--error { background: var(--danger-bg); color: var(--danger); }
+.message--info { background: var(--info-bg); color: var(--primary); }
+.message--warning { background: var(--warning-bg); color: var(--warning); }
+
+.status {
+  display: inline-block; padding: 2px 10px; border-radius: 999px;
+  font-size: 0.8125rem; font-weight: 700;
+}
+.status--pending { background: var(--warning-bg); color: var(--warning); }
+.status--approved { background: var(--success-bg); color: var(--success); }
+.status--rejected { background: var(--danger-bg); color: var(--danger); }
+
+.compress-status { color: var(--muted); font-size: 0.875rem; }
+.compress-status--error { color: var(--danger); }
