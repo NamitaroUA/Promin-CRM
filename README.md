@@ -1,105 +1,105 @@
 Copyright (c) 2026 Namitaro. All rights reserved. No permission is granted to copy, distribute, or modify this software.
 
-# Промінь (Promin CRM)
+# Promin (Promin CRM)
 
-Вебзастосунок для IT-гуртка Боярського фахового коледжу НУБіП України. Він покращує комунікацію між викладачами та студентами щодо заходів усередині коледжу:
+A web application for the IT club of the Boiarka Professional College of NULES of Ukraine. It improves communication between teachers and students about events held inside the college:
 
-- **викладачі** публікують пости про події, наукову, спортивну, громадську та творчу діяльність;
-- **студенти** знаходять заходи і повідомляють про свою участь;
-- **викладачі** підтверджують участь студентів.
+- **teachers** publish posts about events and about scientific, sports, civic and creative activities;
+- **students** find events and report that they took part;
+- **teachers** confirm the students' participation.
 
-Інтерфейс задуманий простим і зрозумілим для різних поколінь. Сайт оптимізований насамперед для телефонів, але підтримує і десктоп. Надалі планується гейміфікація (рейтинг, лідерборд) і календар подій.
+The interface is meant to be simple and clear for every generation. The site is optimised for phones first, with good desktop support. Gamification (rating, leaderboard) and an events calendar are planned.
 
-> **Це внутрішня система коледжу.** Проєкт не розрахований на запуск чи розгортання сторонніми особами. Працює лише один екземпляр, яким керує автор. Облікові записи створює адміністратор, публічної реєстрації немає.
+> **This is an internal college system.** The project is not intended to be run or deployed by third parties. A single instance runs, managed by the author. Accounts are created by an administrator; there is no public sign-up.
 
-## Функціонал
+## Features
 
-### Публічна частина
-- Головна сторінка і сторінка «Про нас».
-- Вхід, вихід і зміна пароля (стандартна автентифікація Django).
+### Public part
+- Home page and "About" page.
+- Log in, log out and password change (standard Django authentication).
 
-### Кабінет користувача (`/dashboard/`)
-- Головна кабінету: привітання, рейтинг, роль і статус.
-- Профілі користувачів.
-- **Стрічка постів.** Користувачі з групи **Editor** створюють і редагують пости. Редагувати пост може лише його автор.
+### User dashboard (`/dashboard/`)
+- Dashboard home: greeting, rating, role and status.
+- User profiles.
+- **Post feed.** Users in the **Editor** group create and edit posts. Only the author of a post can edit it.
 
-### Заявки на участь у заходах
-- **Подача заявки.**
-  - Кожен користувач, крім автора посту, може подати під постом одну заявку: опис ролі (наприклад, «перше місце, капітан команди») і, за бажанням, сертифікат.
-  - Поки заявка очікує розгляду, її можна редагувати або відкликати.
-  - Відхилену заявку можна виправити й подати знову.
-- **Розгляд.**
-  - Автор посту бачить заявки на сторінці посту і на окремій сторінці «Заявки на підтвердження». Він може підтвердити заявку або відхилити її, за потреби вказавши причину.
-  - Роль **Root Editor** (група Django) дає право розглядати заявки під будь-яким постом.
-  - Ніхто не може розглядати власну заявку.
-- **Сертифікати.** Формати JPG, PNG і PDF. Вони стискаються **у браузері** до ≤ 100 КБ, бо сховище Supabase обмежене, а сервер на Vercel не повинен виконувати важку обробку.
-  - Зображення зменшуються і перекодовуються у WebP, а якщо браузер не підтримує WebP — у JPEG.
-  - Перші три сторінки PDF склеюються в одне зображення.
-  - Сервер лише дешево перевіряє розмір і справжній тип файлу.
-  - Файл видаляється зі сховища разом із заявкою або коли його замінюють новим.
-- **Адмінка.** У Django admin заявки показуються разом із сертифікатами. Є масові дії «Підтвердити» і «Відхилити», а файли, завантажені через адмінку, проходять ту саму перевірку, що й на сайті.
+### Event participation requests
+- **Submitting a request.**
+  - Any user except the post's author can submit one request under a post: a description of their role (e.g. "first place, team captain") and, optionally, a certificate.
+  - While the request is pending, it can be edited or withdrawn.
+  - A rejected request can be corrected and resubmitted.
+- **Review.**
+  - The post's author sees the requests on the post page and on a separate "Requests to confirm" page (Заявки на підтвердження). They can approve a request or reject it, optionally giving a reason.
+  - The **Root Editor** role (a Django group) can review requests under any post.
+  - Nobody can review their own request.
+- **Certificates.** JPG, PNG and PDF. They are compressed **in the browser** to ≤ 100 KB, because Supabase storage is limited and the server on Vercel must not do heavy processing.
+  - Images are downscaled and re-encoded to WebP, or to JPEG if the browser cannot encode WebP.
+  - The first three pages of a PDF are stitched into a single image.
+  - The server only performs cheap checks of the size and the real file type.
+  - A file is removed from storage together with its request, or when it is replaced by a new one.
+- **Admin.** Django admin shows requests together with their certificates. It has bulk "Approve" and "Reject" actions, and files uploaded through the admin go through the same validation as on the site.
 
-## Стек
+## Stack
 
-| Частина | Технології |
+| Part | Technologies |
 |---|---|
-| Бекенд | Python 3.14, Django 6.0 |
-| База даних | PostgreSQL (Supabase) через `dj-database-url` і `psycopg` 3; SQLite локально, якщо `DATABASE_URL` не задано |
-| Файли | Supabase Storage (S3-сумісне) через `django-storages` і `boto3`; посилання на файли тимчасові й підписані |
-| Обробка файлів | Pillow (перевірка на сервері); у браузері Canvas API і [pdf.js](https://mozilla.github.io/pdf.js/) 4.10.38 (legacy-збірка, Apache-2.0, лежить у `users/static/vendor/pdfjs/`) |
-| Фронтенд | Шаблони Django, CSS, JavaScript без фреймворків і збірки |
-| Хостинг | Vercel |
+| Backend | Python 3.14, Django 6.0 |
+| Database | PostgreSQL (Supabase) via `dj-database-url` and `psycopg` 3; SQLite locally when `DATABASE_URL` is not set |
+| Files | Supabase Storage (S3-compatible) via `django-storages` and `boto3`; file links are temporary and signed |
+| File processing | Pillow (server-side validation); in the browser, the Canvas API and [pdf.js](https://mozilla.github.io/pdf.js/) 4.10.38 (legacy build, Apache-2.0, vendored in `users/static/vendor/pdfjs/`) |
+| Frontend | Django templates, CSS, plain JavaScript with no framework or build step |
+| Hosting | Vercel |
 
-## Структура
+## Structure
 
 ```
-promin/      налаштування проєкту, кореневі маршрути
-frontpage/   публічні сторінки (головна, «Про нас»)
-users/       користувачі, кабінет, пости, заявки на участь
+promin/      project settings, root URLs
+frontpage/   public pages (home, "About")
+users/       users, dashboard, posts, participation requests
   models.py        User, Post, PostAttendance, Attachment
-  views.py         кабінет, пости, заявки, сторінка розгляду
+  views.py         dashboard, posts, requests, review page
   forms.py         PostForm, AttendanceForm
-  validators.py    серверна перевірка сертифікатів
-  signals.py       видалення файлів зі сховища
-  static/js/certificate_compress.js   стиснення файлів у браузері
-templates/   сторінки входу та зміни пароля
+  validators.py    server-side certificate validation
+  signals.py       removal of files from storage
+  static/js/certificate_compress.js   in-browser file compression
+templates/   login and password change pages
 ```
 
-## Адміністрування
+## Administration
 
-- Користувачів створює адміністратор в адмінці (`/admin/`).
-- Ролі **Editor** (публікація постів) і **Root Editor** (розгляд будь-яких заявок) видаються в полі «Групи» користувача. Обидві групи створюються автоматично під час міграцій.
+- Users are created by an administrator in the admin (`/admin/`).
+- The **Editor** (publishing posts) and **Root Editor** (reviewing any request) roles are assigned in the user's "Groups" field. Both groups are created automatically by the migrations.
 
-## Тести
+## Tests
 
-Для розробника:
+For the developer:
 
 ```bash
 python manage.py test users
 ```
 
-Тести використовують тимчасову базу і сховище в пам'яті, тож нічого не завантажують у Supabase.
+The tests use a temporary database and in-memory storage, so nothing is uploaded to Supabase.
 
-## Використання ШІ в розробці
+## Use of AI in development
 
-Базову частину проєкту автор написав самостійно, без ШІ. Це структура проєкту, публічні сторінки та їх стилі, автентифікація, моделі користувачів і постів, створення та редагування постів, налаштування Supabase і Vercel. В історії git це всі коміти до `a29e0bf` включно.
+The author wrote the base of the project by hand, without AI: the project structure, the public pages and their styles, authentication, the user and post models, creating and editing posts, and the Supabase and Vercel setup. In the git history, these are all commits up to and including `a29e0bf`.
 
-**З допомогою ШІ розроблено** все, що в історії git іде після коміту `a29e0bf` (гілка `feature/attendance-requests`):
+**Developed with the help of AI:** everything that comes after commit `a29e0bf` in the git history (merged from the `feature/attendance-requests` branch):
 
-- функцію заявок на участь: статуси, повторна подача, причина відхилення, роль Root Editor, сторінка «Заявки на підтвердження», адмінка;
-- стиснення сертифікатів у браузері, серверну перевірку файлів і їх видалення зі сховища;
-- автоматичні тести (`users/tests.py`);
-- мінімальні стилі кабінету (`users/static/css/dashboard.css`), тимчасові до розробки дизайну;
-- дрібні виправлення: редагування посту тільки автором, обробка видаленого автора, `ALLOWED_HOSTS` зі змінної середовища, прибирання скомпільованих файлів з git;
-- цей README.
+- the participation request feature: statuses, resubmission, rejection reason, the Root Editor role, the "Requests to confirm" page, the admin;
+- in-browser certificate compression, server-side file validation and removal of files from storage;
+- the automated tests (`users/tests.py`);
+- minimal dashboard styles (`users/static/css/dashboard.css`), temporary until the design is developed;
+- small fixes: only the author can edit a post, handling of a deleted author, `ALLOWED_HOSTS` from an environment variable, removing compiled files from git;
+- this README.
 
-**Як використовувався ШІ.** Інструмент: Claude Code (моделі Anthropic Claude), з чітким розподілом ролей.
+**How AI was used.** Tool: Claude Code (Anthropic Claude models), with a clear division of roles.
 
 - **Claude Opus:**
-  - аналізував проєкт і специфікацію;
-  - складав план по етапах і пропонував варіанти рішень з аргументами (наприклад, способи стиснення файлів);
-  - перевіряв код, написаний іншими моделями, і тестував роботу в браузері;
-  - підготував макети можливого дизайну кабінету (не входять у код).
-- **Claude Sonnet і Claude Haiku** писали код і виконували команди: Sonnet — складніші частини, Haiku — простіші правки, міграції та коміти.
-- **Автор** визначав вимоги, відповідав на питання щодо архітектури і погоджував кожен етап. Перед кожною зміною ШІ пояснював, що саме і чому змінюється (у форматі «до/після»). Нові частини впроваджувалися лише після погодження.
-- **Кожна зміна** оформлена окремим git-комітом з описом англійською. Коміти, створені ШІ, мають рядок `Co-Authored-By: Claude …`.
+  - analysed the project and the specification;
+  - drew up a stage-by-stage plan and proposed solution options with arguments (for example, ways to compress files);
+  - reviewed the code written by the other models and tested it in the browser;
+  - prepared mock-ups of a possible dashboard design (not part of the code).
+- **Claude Sonnet and Claude Haiku** wrote the code and ran the commands: Sonnet the more complex parts, Haiku the simpler edits, migrations and commits.
+- **The author** set the requirements, answered architecture questions and approved every stage. Before each change, the AI explained what would change and why (in a before/after format). New parts were introduced only after approval.
+- **Every change** is a separate git commit with an English message. Commits created by AI carry a `Co-Authored-By: Claude …` line.
