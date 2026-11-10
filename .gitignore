@@ -10,3 +10,4 @@ __pycache__/
 pyrefly.toml
 
 claude_instructions/
+.claude/
