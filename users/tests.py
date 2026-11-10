@@ -871,3 +871,42 @@ class SubmitRaceTests(TestCase):
         texts = [str(m) for m in get_messages(response.wsgi_request)]
         self.assertIn("Ви вже подали заявку на цей пост.", texts)
         self.assertFalse(PostAttendance.objects.exists())
+
+
+@override_settings(STORAGES=IN_MEMORY_STORAGES, PASSWORD_HASHERS=FAST_HASHERS)
+class CertificatePreviewTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        User = get_user_model()
+        cls.author = User.objects.create_user(username="author", password="x")
+        cls.student = User.objects.create_user(username="student", password="x")
+        cls.post = Post.objects.create(title="Олімпіада", author=cls.author)
+        cls.attendance = PostAttendance.objects.create(user=cls.student, post=cls.post)
+
+    def attach(self, name, content):
+        return Attachment.objects.create(
+            post_attendance=self.attendance, file=SimpleUploadedFile(name, content)
+        )
+
+    def detail(self):
+        self.client.force_login(self.student)
+        return self.client.get(reverse("users:post_detail", kwargs={"pk": self.post.pk}))
+
+    def test_is_image_by_extension(self):
+        for name in ("a.webp", "a.jpg", "a.PNG"):
+            self.assertTrue(Attachment(file=name).is_image, name)
+        self.assertFalse(Attachment(file="a.pdf").is_image)
+
+    def test_image_certificate_renders_preview(self):
+        self.attach("c.png", _image_bytes("PNG"))
+        self.assertContains(self.detail(), '<img src=', html=False)
+        self.assertContains(self.detail(), 'class="certificate-preview"')
+
+    def test_pdf_certificate_renders_link_without_img(self):
+        self.attach("c.pdf", PDF_BYTES)
+        response = self.detail()
+        self.assertContains(response, "Сертифікат (PDF)")
+        self.assertNotContains(response, 'class="certificate-preview"')
+
+    def test_post_str(self):
+        self.assertEqual(str(self.post), self.post.title)

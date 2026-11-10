@@ -11,7 +11,8 @@
 <p>Пост: <a href="{% url 'users:post_detail' pk=attendance.post.pk %}">{{ attendance.post.title }}</a></p>
 
 {% for attachment in attendance.attachments.all %}
-<p>Поточний сертифікат: <a href="{{ attachment.file.url }}" target="_blank" rel="noopener">Сертифікат</a></p>
+<p>Поточний сертифікат:</p>
+{% include "users/includes/certificate.html" %}
 <p>Оберіть новий файл, щоб замінити його.</p>
 {% endfor %}
 

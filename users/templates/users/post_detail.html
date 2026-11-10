@@ -31,7 +31,7 @@
     {% endif %}
     <p>{{ my_attendance.description }}</p>
     {% for attachment in my_attendance.attachments.all %}
-    <p><a href="{{ attachment.file.url }}" target="_blank" rel="noopener">Сертифікат</a></p>
+    {% include "users/includes/certificate.html" %}
     {% endfor %}
     {% if my_attendance.status == "pending" %}
     <a href="{% url 'users:attendance_edit' my_attendance.pk %}">Редагувати заявку</a>

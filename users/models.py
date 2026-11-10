@@ -59,6 +59,9 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Створено")
     last_edit = models.DateTimeField(auto_now=True, verbose_name="Оновлено")
 
+    def __str__(self):
+        return self.title
+
 # Multiple images/files for a single post implementation
 class PostImage(models.Model):
     post = models.ForeignKey(Post, on_delete=CASCADE, related_name="images")
@@ -97,3 +100,10 @@ class Attachment(models.Model):
     post_attendance = models.ForeignKey(PostAttendance, on_delete=CASCADE, related_name="attachments")
     file = models.FileField(upload_to="attachments/%Y/%m/", verbose_name="Файл")
     last_edit = models.DateTimeField(auto_now=True, verbose_name="Оновлено")
+
+    IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
+
+    @property
+    def is_image(self):
+        # Compressed certificates are images; small PDFs are kept as PDF
+        return self.file.name.rsplit(".", 1)[-1].lower() in self.IMAGE_EXTENSIONS

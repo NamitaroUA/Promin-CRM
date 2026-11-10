@@ -6,7 +6,7 @@
     <p>Причина відхилення: {{ att.review_comment }}</p>
     {% endif %}
     {% for attachment in att.attachments.all %}
-    <p><a href="{{ attachment.file.url }}" target="_blank" rel="noopener">Сертифікат</a></p>
+    {% include "users/includes/certificate.html" %}
     {% endfor %}
     {% if att.user_id != request.user.id %}
     <div class="review-actions">

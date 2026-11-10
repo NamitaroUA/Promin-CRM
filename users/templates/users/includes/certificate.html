@@ -1,0 +1,7 @@
+{% with url=attachment.file.url %}
+{% if attachment.is_image %}
+<p><a href="{{ url }}" target="_blank" rel="noopener" class="certificate-link"><img src="{{ url }}" alt="Сертифікат" loading="lazy" class="certificate-preview"></a></p>
+{% else %}
+<p><a href="{{ url }}" target="_blank" rel="noopener">Сертифікат (PDF)</a></p>
+{% endif %}
+{% endwith %}
