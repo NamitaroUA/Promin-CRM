@@ -1,0 +1,26 @@
+{% extends "users/base.html" %}
+
+{% load static %}
+
+{% block title %}
+Редагування заявки
+{% endblock %}
+
+{% block content %}
+<h2>Редагування заявки</h2>
+<p>Пост: <a href="{% url 'users:post_detail' pk=attendance.post.pk %}">{{ attendance.post.title }}</a></p>
+
+{% for attachment in attendance.attachments.all %}
+<p>Поточний сертифікат: <a href="{{ attachment.file.url }}" target="_blank" rel="noopener">Сертифікат</a></p>
+<p>Оберіть новий файл, щоб замінити його.</p>
+{% endfor %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Зберегти</button>
+</form>
+<script type="module" src="{% static 'js/certificate_compress.js' %}"></script>
+
+<a href="{% url 'users:post_detail' pk=attendance.post.pk %}">Повернутися до посту</a>
+{% endblock %}

@@ -8,15 +8,69 @@
 {% endblock %}
 
 {% block content %}
-{% if user|is_editor %}
+{% if user|is_editor and post.author == user %}
 <a href="{% url 'users:post_edit' pk=post.pk %}">Редагувати</a>
 {% endif %}
 
 <h2>{{ post.title }}</h2>
 <p>{{ post.description }}</p>
+{% if post.author %}
 <p>Автор: <a href="{% url 'users:profile' pk=post.author.pk %}">{{ post.author.last_name }} {{ post.author.first_name }}</a></p>
+{% else %}
+<p>Автор: користувача видалено</p>
+{% endif %}
 <p>Створено: {{ post.created_at }}</p>
 <p>Редаговано: {{ post.last_edit }}</p>
+
+{% if my_attendance %}
+<section>
+    <h3>Ваша заявка</h3>
+    <p>Статус: {{ my_attendance.get_status_display }}</p>
+    {% if my_attendance.status == "rejected" and my_attendance.review_comment %}
+    <p>Причина відхилення: {{ my_attendance.review_comment }}</p>
+    {% endif %}
+    <p>{{ my_attendance.description }}</p>
+    {% for attachment in my_attendance.attachments.all %}
+    <p><a href="{{ attachment.file.url }}" target="_blank" rel="noopener">Сертифікат</a></p>
+    {% endfor %}
+    {% if my_attendance.status == "pending" %}
+    <a href="{% url 'users:attendance_edit' my_attendance.pk %}">Редагувати заявку</a>
+    {% endif %}
+    {% if my_attendance.status == "pending" or my_attendance.status == "rejected" %}
+    <form method="post" action="{% url 'users:attendance_withdraw' my_attendance.pk %}">
+        {% csrf_token %}
+        <button type="submit">Відкликати заявку</button>
+    </form>
+    {% endif %}
+</section>
+{% endif %}
+
+{% if attendance_form %}
+<section>
+    <h3>{% if my_attendance %}Подати заявку повторно{% else %}Я брав участь{% endif %}</h3>
+    <form method="post" action="{% url 'users:attendance_submit' post.pk %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ attendance_form.as_p }}
+        <button type="submit">Надіслати заявку</button>
+    </form>
+    <script type="module" src="{% static 'js/certificate_compress.js' %}"></script>
+</section>
+{% endif %}
+
+{% if can_review %}
+<section>
+    <h3>Заявки на участь ({{ attendances|length }})</h3>
+    {% if not attendances %}
+    <p>Заявок поки немає.</p>
+    {% else %}
+    <ul>
+        {% for att in attendances %}
+        {% include "users/includes/attendance_review_item.html" %}
+        {% endfor %}
+    </ul>
+    {% endif %}
+</section>
+{% endif %}
 
 <a href="{% url 'users:posts' %}">Повернутися назад</a>
 {% endblock %}

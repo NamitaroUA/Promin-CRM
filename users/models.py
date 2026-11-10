@@ -71,15 +71,29 @@ class PostFile(models.Model):
     last_edit = models.DateTimeField(auto_now=True, verbose_name="Оновлено")
 
 class PostAttendance(models.Model):
+
+    # One attendance request per user per post
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user", "post"], name="unique_attendance_per_post"),
+        ]
+
+    STATUS_CHOICES = [
+        ('pending', 'Очікує розгляду'),
+        ('approved', 'Підтверджено'),
+        ('rejected', 'Відхилено'),
+    ]
+
     user = models.ForeignKey(User, on_delete=CASCADE)
-    post = models.ForeignKey(Post, on_delete=CASCADE)
+    post = models.ForeignKey(Post, on_delete=CASCADE, related_name="attendances")
     description = models.TextField(default="Участь у заході.", blank=True, verbose_name="Опис")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Створено")
     last_edit = models.DateTimeField(auto_now=True, verbose_name="Оновлено")
-    status = models.BooleanField(default=False, verbose_name="Підтверджено")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending", verbose_name="Статус")
+    review_comment = models.TextField(blank=True, verbose_name="Причина відхилення")
 
 # Multiple attachments for single PostAttendance implementation
 class Attachment(models.Model):
     post_attendance = models.ForeignKey(PostAttendance, on_delete=CASCADE, related_name="attachments")
-    file = models.FileField(verbose_name="Файл")
+    file = models.FileField(upload_to="attachments/%Y/%m/", verbose_name="Файл")
     last_edit = models.DateTimeField(auto_now=True, verbose_name="Оновлено")

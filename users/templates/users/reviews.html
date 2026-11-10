@@ -1,0 +1,43 @@
+{% extends "users/base.html" %}
+
+{% load user_tags %}
+
+{% block title %}
+Заявки на підтвердження
+{% endblock %}
+
+{% block content %}
+<h1>Заявки на підтвердження</h1>
+<p>Очікують розгляду: {{ total_pending }}</p>
+{% if is_root %}
+<p>Ви бачите заявки під усіма постами (Root Editor).</p>
+{% endif %}
+
+{% for post in posts %}
+<section>
+    <h3><a href="{% url 'users:post_detail' pk=post.pk %}">{{ post.title }}</a> ({{ post.pending_count }})</h3>
+    {% if is_root %}
+    {% if post.author %}
+    <p>Автор: <a href="{% url 'users:profile' pk=post.author.pk %}">{{ post.author.last_name }} {{ post.author.first_name }}</a></p>
+    {% else %}
+    <p>Автор: користувача видалено</p>
+    {% endif %}
+    {% endif %}
+    {% if post.pending_attendances %}
+    <ul>
+        {% for att in post.pending_attendances %}
+        {% include "users/includes/attendance_review_item.html" with att=att next=request.get_full_path %}
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Немає заявок, що очікують розгляду.</p>
+    {% endif %}
+</section>
+{% empty %}
+{% if not is_root %}
+<p>У вас поки немає постів.</p>
+{% endif %}
+{% endfor %}
+
+<a href="{% url 'users:home' %}">Повернутися назад</a>
+{% endblock %}
