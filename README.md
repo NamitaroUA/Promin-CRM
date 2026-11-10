@@ -10,6 +10,8 @@ Copyright (c) 2026 Namitaro. All rights reserved. No permission is granted to co
 
 Інтерфейс задуманий простим і зрозумілим для різних поколінь. Сайт оптимізований насамперед для телефонів, але підтримує і десктоп. Надалі планується гейміфікація (рейтинг, лідерборд) і календар подій.
 
+> **Це внутрішня система коледжу.** Проєкт не розрахований на запуск чи розгортання сторонніми особами. Працює лише один екземпляр, яким керує автор. Облікові записи створює адміністратор, публічної реєстрації немає.
+
 ## Функціонал
 
 ### Публічна частина
@@ -63,39 +65,14 @@ users/       користувачі, кабінет, пости, заявки н
 templates/   сторінки входу та зміни пароля
 ```
 
-## Локальний запуск
+## Адміністрування
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-Створіть файл `.env` за зразком `.env.example`:
-
-```
-SECRET_KEY=будь-який-секретний-рядок
-DEBUG=True
-ALLOWED_HOSTS=localhost,127.0.0.1
-# Необов'язково: без DATABASE_URL використовується SQLite
-DATABASE_URL=postgres://...
-# Потрібні для завантаження файлів (Supabase Storage)
-SUPABASE_S3_ACCESS_KEY=...
-SUPABASE_S3_SECRET_KEY=...
-SUPABASE_STORAGE_BUCKET=...
-SUPABASE_S3_REGION=...
-SUPABASE_S3_ENDPOINT_URL=...
-```
-
-```bash
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py runserver
-```
-
-Міграції автоматично створюють групи **Editor** і **Root Editor**. Ролі видаються в адмінці (`/admin/`) у полі «Групи» користувача.
+- Користувачів створює адміністратор в адмінці (`/admin/`).
+- Ролі **Editor** (публікація постів) і **Root Editor** (розгляд будь-яких заявок) видаються в полі «Групи» користувача. Обидві групи створюються автоматично під час міграцій.
 
 ## Тести
+
+Для розробника:
 
 ```bash
 python manage.py test users
